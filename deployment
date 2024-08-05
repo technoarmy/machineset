@@ -1,34 +1,21 @@
-apiVersion: machine.openshift.io/v1beta1
-kind: MachineSet
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: example-machineset
-  namespace: openshift-machine-api
+  name: nginx-deployment
+  labels:
+    app: nginx
 spec:
   replicas: 3
   selector:
     matchLabels:
-      machine.openshift.io/cluster-api-machineset: example-machineset
+      app: nginx
   template:
     metadata:
       labels:
-        machine.openshift.io/cluster-api-machineset: example-machineset
-        machine.openshift.io/cluster-api-cluster: example-cluster
+        app: nginx
     spec:
-      providerSpec:
-        value:
-          apiVersion: gcpprovider.openshift.io/v1beta1
-          kind: GCPMachineProviderSpec
-          region: us-central1
-          zone: us-central1-a
-          machineType: n1-standard-4
-          networkInterfaces:
-            - network: example-network
-              subnetwork: example-subnetwork
-          disks:
-            - boot: true
-              autoDelete: true
-              sizeGb: 50
-              type: pd-ssd
-          serviceAccounts:
-            - email: example-service-account@project-id.iam.gserviceaccount.com
-              scopes:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
